@@ -1,5 +1,7 @@
 import React from 'react';
 import { team } from '../data';
+import { ImpactCounter } from '../components/ImpactCounter';
+import { NewsletterSignup } from '../components/NewsletterSignup';
 
 export const AboutPage = () => {
   return (
@@ -34,23 +36,11 @@ export const AboutPage = () => {
 
         {/* Impact Stats */}
         <div className="bg-blue-900 text-white rounded-lg p-8 mb-16">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-4xl font-bold mb-2">1000+</div>
-              <div className="text-blue-100">People Helped</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">50+</div>
-              <div className="text-blue-100">Active Programs</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">200+</div>
-              <div className="text-blue-100">Volunteers</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">10+</div>
-              <div className="text-blue-100">Years of Impact</div>
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <ImpactCounter end={1000} label="People Helped" />
+            <ImpactCounter end={50} label="Active Programs" />
+            <ImpactCounter end={200} label="Volunteers" />
+            <ImpactCounter end={10} label="Years of Impact" />
           </div>
         </div>
 
@@ -78,7 +68,7 @@ export const AboutPage = () => {
         </div>
 
         {/* Partners Section */}
-        <div>
+        <div className="mb-16">
           <h2 className="text-3xl font-bold text-blue-900 mb-8 text-center">Our Partners</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[1, 2, 3, 4].map((i) => (
@@ -88,6 +78,8 @@ export const AboutPage = () => {
             ))}
           </div>
         </div>
+
+        <NewsletterSignup />
       </div>
     </div>
   );
