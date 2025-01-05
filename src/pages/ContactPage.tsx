@@ -1,8 +1,58 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { Button } from '../components/Button';
 
 export const ContactPage = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: '',
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  // Handle input changes
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: '9414bfb1-db0e-40b4-8a0a-a6c73af36684', 
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setSuccessMessage('Thank you for your message. We will get back to you soon.');
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        setErrorMessage(result.message || 'Something went wrong. Please try again.');
+      }
+    } catch (error) {
+      setErrorMessage('An error occurred. Please try again later.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,7 +67,12 @@ export const ContactPage = () => {
           {/* Contact Form */}
           <div className="bg-gray-50 p-8 rounded-lg">
             <h2 className="text-2xl font-bold text-blue-900 mb-6">Send us a Message</h2>
-            <form className="space-y-6">
+
+            {/* Display success or error message */}
+            {successMessage && <p className="text-green-600 mb-4">{successMessage}</p>}
+            {errorMessage && <p className="text-red-600 mb-4">{errorMessage}</p>}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                   Name
@@ -25,6 +80,9 @@ export const ContactPage = () => {
                 <input
                   type="text"
                   id="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
                 />
               </div>
@@ -35,6 +93,9 @@ export const ContactPage = () => {
                 <input
                   type="email"
                   id="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
                 />
               </div>
@@ -45,10 +106,15 @@ export const ContactPage = () => {
                 <textarea
                   id="message"
                   rows={4}
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
                 ></textarea>
               </div>
-              <Button variant="primary" className="w-full">Send Message</Button>
+              <Button type="submit" variant="primary" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? 'Sending...' : 'Send Message'}
+              </Button>
             </form>
           </div>
 
